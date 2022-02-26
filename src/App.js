@@ -1,8 +1,8 @@
 import React from 'react'
-
+import './assets/css/index.css';
 const App = () => {
   return (
-    <div>App</div>
+    <h2 className="text-3xl">App</h2>
   )
 }
 
