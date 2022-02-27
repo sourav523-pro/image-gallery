@@ -1,8 +1,12 @@
 import React from 'react'
-import './assets/css/index.css';
+import Youtube from './components/Youtube';
+import './assets/css/tailwind.css';
+
 const App = () => {
   return (
-    <h2 className="text-3xl">App</h2>
+    <>
+      <Youtube />
+    </>
   )
 }
 
