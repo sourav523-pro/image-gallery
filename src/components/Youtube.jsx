@@ -12,11 +12,21 @@ const Youtube = () => {
         }
     )
     const getInfo = () => {
+        let searchUrl = search.url
         // let re = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/watch\?v=([^&]+)/m;
-        if (!search.url || matchYoutubeUrl(search.url) === false) {
+        if (!searchUrl || matchYoutubeUrl(searchUrl) === false) {
             setSearch({ ...search, flag: false, failedMsg: '!Invalid url, Please give currect one' })
         } else {
             setSearch({ ...search, flag: true, failedMsg: '' })
+            let apiUrl = `http://localhost:5000/youtube/getinfo?url=${searchUrl}`
+            console.log(apiUrl)
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    setSearch({ ...search, flag: false, infoData: data, url: '' })
+                    console.log(search.infoData)
+                })
+
         }
     }
     const matchYoutubeUrl = (url) => {
