@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import SearchButton from "../tailwindcomp/SearchButton"
 import ProcessingButton from "../tailwindcomp/ProcessingButton"
-import ProcessingCard from "../tailwindcomp/ProcessingCard"
+import ProcessingOptions from "../tailwindcomp/ProcessingOptions"
+import RelatedVideos from './RelatedVideos'
 const Youtube = () => {
     const [search, setSearch] = useState(
         {
             flag: false,
             infoData: [],
+            dataFetched: false,
             url: '',
             failedMsg: '',
         }
@@ -23,8 +25,8 @@ const Youtube = () => {
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    setSearch({ ...search, flag: false, infoData: data, url: '' })
-                    console.log(search.infoData)
+                    setSearch({ ...search, flag: false, infoData: data, dataFetched: true, url: '' })
+                    console.log(data)
                 })
 
         }
@@ -56,19 +58,17 @@ const Youtube = () => {
                         </div>
                     </div>
                 </div>
-                {
-                    search.flag ?
-                        <section className="text-gray-700 body-font">
-                            <h1 className="text-gray-700 text-2xl">Related Videos</h1>
-                            <div className="container px-5 py-4 mx-auto">
-                                <div className="flex flex-wrap mx-4">
-                                    {[1, 2, 3].map((val, index) => (<ProcessingCard key={index} />))}
-                                </div>
-                            </div>
-                        </section>
-                        :
-                        ''
-                }
+                <div className="mt-5 mx-5">
+                    <h1 className="text-gray-700 text-xl">{search.flag === false && search.dataFetched ? 'Available Formates' : 'Available Formates'}</h1>
+                    {
+                        [1, 2, 3, 4].map((val, index) => (
+                            <ProcessingOptions key={index} />
+                        ))
+                    }
+                </div>
+
+                <RelatedVideos data={search} />
+
             </div>
 
         </>
