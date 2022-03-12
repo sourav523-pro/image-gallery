@@ -4,6 +4,7 @@ import ProcessingButton from "../tailwindcomp/ProcessingButton"
 import ProcessingOptions from "../tailwindcomp/ProcessingOptions"
 import DownloadOptions from "../tailwindcomp/DownloadOptions"
 import RelatedVideos from './RelatedVideos'
+import Alert from '../tailwindcomp/Alert'
 const Youtube = () => {
     const [search, setSearch] = useState(
         {
@@ -17,12 +18,14 @@ const Youtube = () => {
     const getInfo = (e) => {
         e.preventDefault()
         let searchUrl = search.url
-        // let re = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/watch\?v=([^&]+)/m;
+        // let re = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/watch\?v=([^&]+)/m
         if (!searchUrl || matchYoutubeUrl(searchUrl) === false) {
             setSearch({ ...search, flag: false, failedMsg: '!Invalid url, Please give currect one' })
         } else {
             setSearch({ ...search, flag: true, failedMsg: '' })
-            let apiUrl = `http://localhost:5000/youtube/getinfo?url=${searchUrl}`
+            let urlArr = searchUrl.split('/')
+            let videoId = urlArr[urlArr.length - 1]
+            let apiUrl = `http://localhost:5000/youtube/getinfo?videoid=${videoId}`
             console.log(apiUrl)
             fetch(apiUrl)
                 .then(response => response.json())
@@ -30,15 +33,20 @@ const Youtube = () => {
                     setSearch({ ...search, flag: false, infoData: data, dataFetched: true, url: '' })
                     console.log(data)
                 })
+                .catch((err) => {
+                    console.error(err)
+                    // alert('Failed to get video info')
+                    setSearch({ ...search, flag: false, failedMsg: err.toString() })
+                })
 
         }
     }
     const matchYoutubeUrl = (url) => {
-        var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+        var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/
         if (url.match(p)) {
-            return url.match(p)[1];
+            return url.match(p)[1]
         }
-        return false;
+        return false
     }
     // const downloadVideo = (mimeType, quality) => {
 
@@ -46,12 +54,16 @@ const Youtube = () => {
     const handleUrlChange = (e) => {
         setSearch({ ...search, url: e.target.value })
     }
-    // let videoFormats = search.infoData.formats || []
-    // let videoId = search.infoData.videoDetails.videoId || ''
-    let videoId = ''
+    const closeAlert = () => {
+        setSearch({ ...search, failedMsg: '' })
+    }
+
+    let videoId = search.dataFetched ? search.infoData.videoDetails.videoId : ''
+    let videoName = search.dataFetched ? search.infoData.videoDetails.title : ''
     return (
         <>
             <div className="mt-5 mx-5">
+                {!search.flag && search.failedMsg !== '' ? <Alert type='red' title='error' message={search.failedMsg} onClose={closeAlert} /> : ''}
                 <div className="flex justify-center">
                     {/* <div className="mb-3 xl:w-96"> */}
                     <div className="mb-3">
@@ -85,6 +97,7 @@ const Youtube = () => {
                                         mediaType={mediaType}
                                         extension={extension}
                                         videoId={videoId}
+                                        videoName={videoName}
                                     />
                                 })
                                 :
