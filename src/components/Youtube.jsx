@@ -25,7 +25,7 @@ const Youtube = () => {
             setSearch({ ...search, flag: true, failedMsg: '' })
             let urlArr = searchUrl.split('/')
             let videoId = urlArr[urlArr.length - 1]
-            let apiUrl = `http://localhost:5000/youtube/getinfo?videoid=${videoId}`
+            let apiUrl = `https://json-base.herokuapp.com/youtube/getinfo?videoid=${videoId}&url=${searchUrl}`
             console.log(apiUrl)
             fetch(apiUrl)
                 .then(response => response.json())
@@ -91,13 +91,14 @@ const Youtube = () => {
                                     let [type, extension] = mediaType.split('/')
                                     return <DownloadOptions
                                         key={index}
-                                        quality={val.quality}
-                                        qualityLabel={val.qualityLabel}
+                                        fromatIndex={index}
                                         type={type}
                                         mediaType={mediaType}
                                         extension={extension}
                                         videoId={videoId}
                                         videoName={videoName}
+                                        itag={val.itag}
+                                        video={val}
                                     />
                                 })
                                 :
